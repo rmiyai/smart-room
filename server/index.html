@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <meta charset="utf-8" />
+  <title>arduino control</title>
+  <meta name="viewport" content="width=device-width">
+  <link rel="stylesheet" href="index.css">
+  <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+  <script src="http://ccchart.com/js/ccchart.js" charset="utf-8"></script>
+  <style>
+	#wrapper{
+		width:980px;
+		overflow:hidden;
+	}
+	#data{
+		float:left;
+		width:300px;
+		padding-left: 20px;
+	}
+	#gArea{
+		width:400px;
+		float: left;
+	}
+	#camera{
+		clear:both;
+	}
+  </style>
+ </head>
+ <body>
+ 	<div id="wrapper">
+	    <h1>RoomMonitor</h1>
+		<div id="gArea">
+	    	<canvas id="graph"></canvas>
+	    </div>
+	    <div id="data">
+		    <h2>温度:<span id="temp"></span> ℃</h2>
+		    <h2>湿度:<span id="hum"></span> ％</h2>
+		    <h2>気圧:<span id="pre"></span> hPa</h2>
+		    <button>エアコン ON/OFF</button>
+		</div>
+		<div id="camera">
+			<h2>Camera</h2>
+			<a href="http://192.168.1.200:8081"><img class="motion" src="http://192.168.1.200:8081" /></a>
+		</div>
+	    <script src="/socket.io/socket.io.js"></script>
+	    <script>
+	    var temp = {};
+	    var getData;
+		var timeArray = [];
+
+
+	        
+	        //ボタンが押されたらメッセージ送信
+	        var socket = io.connect();
+	        $('button').click(function(){
+	            socket.emit('sendmsg','o');
+	        });
+	        //イベント受信時の処理
+	        socket.on('recvmsg',function(data){
+	            //console.log(data);
+	            getData = data.split(",");
+	            //console.log(getData[0]);
+	            $('#temp').text(getData[1]);
+	            $('#hum').text(getData[0]);
+	            $('#pre').text(getData[2]);
+			    
+	        });
+
+		    var data1 = {
+
+		      "config": {
+		        "title": "",
+		        "subTitle": "",
+		        "height": "300",
+		        "width": "400",
+		        "paddingTop": "30",
+		        "paddingRight": "70",
+		        "type": "line",
+		        "lineWidth": 2,
+		        "maxY": 100,
+		        "minY": 0,
+		        "axisYLen": 10,
+		        //"useVal": "yes",
+		        "useMarker": "arc",
+		        "xScaleSkip": 3,
+		        "maxWsColLen": 10,
+		        "colorSet": 
+		              ["#DDA0DD","#3CB000"]
+		      },
+
+		      "data":  [
+		        ["時間"],
+		        ["温度"],
+		        ["湿度"]
+		      ]
+		    }
+		 //    var data2= {
+			// 	"config": {
+			// 	"type": "area",
+			// 	"title": "data2",
+			// 	"axisXLen": 5,
+			// 	"subtitle": "あいうえお",
+			// 	"minY": 0,
+			// 	"unit":"data2",
+			// 	"borderWidth": 4,
+			// 	"hanreiMarkerStyle": 'arc'
+			// },
+
+			  ccchart.wsCloseAll();//一旦クリア
+			  ccchart
+			      .init('graph', data1)
+			      .ws('ws://192.168.1.200:8016')
+			      .on('message', ccchart.wscase.oneColAtATime);
+	    </script>
+	</div>
+ </body>
+</html>

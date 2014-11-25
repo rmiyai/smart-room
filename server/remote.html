@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>graph</title>
+</head>
+<body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="./ccchart-v1.08.9b1.js" charset="utf-8"></script>
+
+    
+    <form id="myForm">
+        <input type="text" id="msg"> <input type="submit" value="Send!">
+    </form>
+
+    <h2>エアコン</h2>
+      <div class="btn-group">
+        <button id="btn_off" type="button">OFF</button>
+        <button id="btn_on" type="button">ON</button>
+      </div>
+
+    <h2>気温</h2>
+    <div id="temp"></div>
+
+    <canvas id="graph"></canvas>
+    <script>
+    
+    var data1 = {
+
+      "config": {
+        "title": "Room Monitor",
+        "subTitle": "Arduino > RaspberryPi",
+        "type": "line",
+        "lineWidth": 1,
+        "maxY": 100,
+        "minY": 0,
+        "axisYLen": 10,
+        "unit": "湿度",
+        //"useVal": "yes",
+        "useMarker": "arc",
+        "xScaleSkip": 3,
+        "maxWsColLen": 18,
+        "colorSet": 
+              ["#DDA0DD","#3CB000"]
+      },
+
+      "data":  [
+        ["時間"],
+        ["温度"],
+        ["湿度"]
+      ]
+    }
+
+    var data2= {
+      "config": {
+          "type": "circle",
+          "maxY": 50,
+          "minY": 0,
+          "unit":"温度"
+      }
+    }
+
+
+
+
+      ccchart.wsCloseAll();//一旦クリア
+
+      ccchart
+        .init('graph', data1)
+        .add(data2)
+        .ws('ws://192.168.1.200:8016')
+        .on('message', ccchart.wscase.twoCharts);
+
+</script>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    
+    $(function() {
+        var socket = io.connect();
+        // emit: イベントを発信している
+        // on: イベントを待ち受けている
+        $('#myForm').submit(function() {
+            socket.emit('emit_from_client', $('#msg').val());
+        });
+    });
+
+</script>
+</body>
+</html>
