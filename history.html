@@ -19,7 +19,7 @@
 
 	<script src="/socket.io/socket.io.js"></script>
 	<script type="text/javascript">
-		var data_array,
+		var data_array[],
 			str;
 	    //ボタンが押されたらメッセージ送信
         var socket = io.connect();
@@ -30,7 +30,10 @@
         socket.on('log_data',function(data){
             $('#get').text(data);
             console.log(data);
+            var i = 0;
+            data_array[i++] = data;
 	    });
+	    document.write(data_array);
 
 		ccchart.base('', {config : {
 		    "type" : "line", //チャート種類
