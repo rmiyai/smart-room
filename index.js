@@ -51,9 +51,8 @@ io.sockets.on('connection',function(socket){
         var rl = readline.createInterface({'input':rs, 'output': {}});
         var i = 0;
         rl.on('line',function(line){
-            data_array[i++] = line.trim();
+            io.emit('log_data', line + "!");
         });
-        console.log(data_array + '\n');
     });
 });
 
