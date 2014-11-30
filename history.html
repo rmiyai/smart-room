@@ -26,7 +26,7 @@
         });
         //イベント受信時の処理
         socket.on('log_data',function(data){
-            $('#get').text(data + "\n");
+            $('#get').value(data);
             console.log(data);
 		    
 	    });
