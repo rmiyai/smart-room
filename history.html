@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<title>history</title>
+</head>
+<body>
+	<div id="get">
+		
+	</div>
+
+
+	<script type="text/javascript">
+	    //ボタンが押されたらメッセージ送信
+        var socket = io.connect();
+        $('document').ready(function(){
+            socket.emit('history','history');
+        });
+        //イベント受信時の処理
+        socket.on('his_data',function(data){
+            $('#get').innerHTML(data);
+		    
+	        });
+	</script>
+</body>
+</html>
