@@ -1,5 +1,6 @@
-//webサーバ
+//web繧ｵ繝ｼ繝�
 var express = require('express');
+var readline = require('readline');
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
@@ -35,7 +36,7 @@ serial.on('data',function(data){
     io.emit('recvmsg',data.toString());
 });
 
-//クライアントからメッセージを受け取りそれをシリアルでArduinoへ
+//繧ｯ繝ｩ繧､繧｢繝ｳ繝医°繧峨Γ繝�繧ｻ繝ｼ繧ｸ繧貞女縺大叙繧翫◎繧後ｒ繧ｷ繝ｪ繧｢繝ｫ縺ｧArduino縺ｸ
 io.sockets.on('connection',function(socket){
 	socket.on('sendmsg',function(data){
 		serial.write(data,function(err,results){
@@ -55,24 +56,24 @@ io.sockets.on('connection',function(socket){
 });
 
 
-//グラフ描画用
+//繧ｰ繝ｩ繝墓緒逕ｻ逕ｨ
 var WsServer = require('ws').Server;
 var tid;
 
-// WebSocketサーバー作成
+// WebSocket繧ｵ繝ｼ繝舌�ｼ菴懈��
 var ws = new WsServer({
     host: '192.168.1.200',
     port: 8016
 });
 
-broadCast();// データ配信開始
+broadCast();// 繝�繝ｼ繧ｿ驟堺ｿ｡髢句ｧ�
 
-// クライアント接続時イベント
+// 繧ｯ繝ｩ繧､繧｢繝ｳ繝域磁邯壽凾繧､繝吶Φ繝�
 ws.on('connection', function(socket) {
   console.log('conned: ' + ws.clients.length);
 });
 
-// 100ms毎にデータをブロードキャストする
+// 100ms豈弱↓繝�繝ｼ繧ｿ繧偵ヶ繝ｭ繝ｼ繝峨く繝｣繧ｹ繝医☆繧�
 function broadCast(){
   tid = setInterval (function(){
     var fs = require('fs');
