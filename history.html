@@ -19,8 +19,7 @@
 
 	<script src="/socket.io/socket.io.js"></script>
 	<script type="text/javascript">
-		var data_array[],
-			str;
+		var data_array = [];
 	    //ボタンが押されたらメッセージ送信
         var socket = io.connect();
         $('document').ready(function(){
@@ -30,8 +29,7 @@
         socket.on('log_data',function(data){
             $('#get').text(data);
             console.log(data);
-            var i = 0;
-            data_array[i++] = data;
+            data_array.push(data);
 	    });
 	    document.write(data_array);
 
