@@ -1,5 +1,6 @@
 //webサーバ
-var app = require('express')();
+var express = require('express');
+var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var SerialPort = require('serialport').SerialPort;
@@ -20,6 +21,7 @@ fs.readFile('/media/IMATION USB/rttmp.txt', 'utf8', function(err, fd){
 })},5000);
  
 app.use(express.static(__dirname + '/'));
+app.use(express.static(__dirname + '/css'));
 app.get('/',function(req,res){
     res.sendfile('index.html');
 });
