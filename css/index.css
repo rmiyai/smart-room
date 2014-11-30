@@ -4,8 +4,12 @@
 }
 #data{
 	width:400px;
+	float:left;
 }
 #gArea{
 	width:500px;
 	float: left;
+}
+#camera{
+	clear:both;
 }
