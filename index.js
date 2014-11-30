@@ -46,11 +46,10 @@ io.sockets.on('connection',function(socket){
 	});
     //ファイルの内容をwsで送信
     socket.on('history',function(data){
-        console.log(data);
         var rs = fs.ReadStream('/media/IMATION USB/2014-11-04.txt');
         var rl = readline.createInterface({'input':rs, 'output': {}});
         rl.on('line',function(line){
-            io.emit('log_data', line + "!");
+            io.emit('log_data', line);
         });
     });
 });
