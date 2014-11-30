@@ -30,7 +30,9 @@
         socket.on('log_data',function(data){
             $('#get').text(data);
             console.log(data);
+            data_array.push(data);
 	    });
+	    document.write(data_array);
 
 		ccchart.base('', {config : {
 		    "type" : "line", //チャート種類

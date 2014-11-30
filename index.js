@@ -49,9 +49,8 @@ io.sockets.on('connection',function(socket){
         console.log(data);
         var rs = fs.ReadStream('/media/IMATION USB/2014-11-04.txt');
         var rl = readline.createInterface({'input':rs, 'output': {}});
-        var i = 0;
         rl.on('line',function(line){
-            io.emit('log_data', line + "!");
+            io.emit('log_data', line);
         });
     });
 });
