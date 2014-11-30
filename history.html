@@ -16,11 +16,10 @@
 	    //ボタンが押されたらメッセージ送信
         var socket = io.connect();
         $('document').ready(function(){
-        	console.log('emited');
             socket.emit('history','history');
         });
         //イベント受信時の処理
-        socket.on('his_data',function(data){
+        socket.on('log_data',function(data){
             $('#get').innerHTML(data);
 		    
 	        });
