@@ -20,9 +20,10 @@
         });
         //イベント受信時の処理
         socket.on('log_data',function(data){
-            $('#get').innerHTML(data);
+            $('#get').text(data);
+            console.log(data);
 		    
-	        });
+	    });
 	</script>
 </body>
 </html>
