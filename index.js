@@ -13,6 +13,7 @@ http.listen(3000,function(){
 var getData;
 var fs = require('fs');
 var readline = require('readline');
+var data_array;
 
 setInterval(function(){
 fs.readFile('/media/IMATION USB/rttmp.txt', 'utf8', function(err, fd){
@@ -50,9 +51,9 @@ io.sockets.on('connection',function(socket){
         var rl = readline.createInterface({'input':rs, 'output': {}});
         var i = 0;
         rl.on('line',function(line){
-            console.log(i++ + ': ' + line.trim());
+            data_array[i++] = line.trim();
         });
-        rl.resume();
+        console.log(data_array + '\n');
     });
 });
 
