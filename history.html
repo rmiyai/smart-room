@@ -19,6 +19,7 @@
 
 	<script src="/socket.io/socket.io.js"></script>
 	<script type="text/javascript">
+		var data_array;
 	    //ボタンが押されたらメッセージ送信
         var socket = io.connect();
         $('document').ready(function(){
@@ -28,11 +29,8 @@
         socket.on('log_data',function(data){
             //$('#get').text(data);
             //console.log(data);
-            $('#get').text(data);
-            console.log(data);
-            var array = data.split("\n");
-            console.log(array);
-
+            data_array = data.split("\n");
+            $('#get').text(data_array);
 	    });
 
 		ccchart.base('', {config : {
