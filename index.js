@@ -44,6 +44,12 @@ io.sockets.on('connection',function(socket){
 	});
 });
 
+io.sockets.on('connection',function(socket){
+    socket.on('sendmsg',function(data){
+        console.log(data);
+    });
+});
+
 
 //グラフ描画用
 var WsServer = require('ws').Server;
