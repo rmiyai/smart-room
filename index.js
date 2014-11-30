@@ -19,6 +19,7 @@ fs.readFile('/media/IMATION USB/rttmp.txt', 'utf8', function(err, fd){
 	//console.log(fd);
 })},5000);
  
+app.use(express.static(__dirname + '/'));
 app.get('/',function(req,res){
     res.sendfile('index.html');
 });
