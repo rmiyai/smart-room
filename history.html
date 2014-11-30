@@ -27,9 +27,10 @@
         //イベント受信時の処理
         socket.on('log_data',function(data){
             //$('#get').text(data);
-            console.log(data);
+            //console.log(data);
             var splits = data.split("\\n");
             $('#get').text(splits);
+            console.log(splits);
 
 		    
 	    });
