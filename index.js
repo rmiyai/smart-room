@@ -43,9 +43,6 @@ io.sockets.on('connection',function(socket){
 
 		});
 	});
-});
-
-io.sockets.on('connection',function(socket){
     socket.on('history',function(data){
         console.log(data);
         fs.readFile('/media/IMATION USB/2014-11-04.txt', 'utf8', function(err, fd){
@@ -54,6 +51,7 @@ io.sockets.on('connection',function(socket){
         });
     });
 });
+
 
 
 //グラフ描画用

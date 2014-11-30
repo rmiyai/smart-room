@@ -31,10 +31,9 @@
             //$('#get').text(data);
             //console.log(data);
             data_array = data.split("\n");
-            $('#get').text(data_array);
-            str = JSON.stringify(data_array);
+            //$('#get').text(data_array);
 	    });
-        document.write(str);
+        document.write(data_array[0] + "<br>" + data_array[1]);
 
 		ccchart.base('', {config : {
 		    "type" : "line", //チャート種類
