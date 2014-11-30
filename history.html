@@ -28,10 +28,8 @@
         socket.on('log_data',function(data){
             //$('#get').text(data);
             console.log(data);
-            var splits = data.split("\n");
-            for(var i=0; i<splits.length;i++){
-            	$('#get').text(splits[i] + "<br>");
-            }
+            var splits = data.split("\\n");
+            $('#get').text(splits);
 
 		    
 	    });
