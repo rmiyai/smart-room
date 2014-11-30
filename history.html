@@ -30,8 +30,11 @@
             //$('#get').text(data);
             //console.log(data);
             data_array = data.split("\n");
-            $('#get').text(data_array);
+            //$('#get').text(data_array);
 	    });
+	    for(var i=0;i<data_array.length;i++){
+	    	$('#get').text(data_array[i] + "<br>");
+	    }
 
 		ccchart.base('', {config : {
 		    "type" : "line", //チャート種類
