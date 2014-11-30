@@ -28,11 +28,9 @@
         socket.on('log_data',function(data){
             //$('#get').text(data);
             //console.log(data);
-            var splits = data.split("\\n");
-            $('#get').text(splits);
-            console.log(splits);
+            $('#get').text(data);
+            console.log(data);
 
-		    
 	    });
 
 		ccchart.base('', {config : {
