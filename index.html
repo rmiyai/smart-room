@@ -5,11 +5,33 @@
   <title>arduino control</title>
   <meta name="viewport" content="width=device-width">
   <link rel="stylesheet" href="css/index.css">
+  <link href="css/bootstrap.css" rel="stylesheet">
   <script src="jquery-1.11.0.min.js"></script>
   <script src="ccchart-v1.08.9b1.js" charset="utf-8"></script>
  </head>
  <body>
- 	<div id="wrapper">
+ 	<div id="wrapper" class="container">
+ 		<div class="navbar navbar-default" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">ナビゲーションの切替</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="#">SmartRoom</a>
+            </div><!-- /.navbar-header -->
+            <div class="navbar-collapse collapse">
+              <ul class="nav navbar-nav">
+                <li class="active"><a>Home</a></li>
+                <li><a href="http://192.168.1.201:8000/">TankController</a></li>
+                <li><a href="http://192.168.1.201:8080/index.html">Pictures</a></li>
+              </ul>
+            </div><!-- /.navbar-collapse -->
+          </div><!-- /.container -->
+        </div><!-- /.navbar -->
+
 	    <h1>RoomMonitor</h1>
 		<div id="gArea">
 	    	<canvas id="graph"></canvas>
@@ -19,11 +41,11 @@
 		    <h2>温度:<span id="temp"></span> ℃</h2>
 		    <h2>湿度:<span id="hum"></span> ％</h2>
 		    <h2>気圧:<span id="pre"></span> hPa</h2>
-		    <button>エアコン ON/OFF</button>
+		    <button class="btn">エアコン ON/OFF</button>
 		</div>
 		<div id="camera">
 			<h2>Camera</h2>
-			<a href="http://192.168.1.200:8081"><img class="motion" src="http://192.168.1.200:8081" /></a>
+			<img src="http://192.168.1.201:9000/?action=stream" width="400px">
 		</div>
 	    <script src="/socket.io/socket.io.js"></script>
 	    <script>
@@ -96,5 +118,7 @@
 			      .on('message', ccchart.wscase.oneColAtATime);
 	    </script>
 	</div>
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="js/bootstrap.js"></script>
  </body>
 </html>
