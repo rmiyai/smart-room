@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ja">
+ <head>
+  <meta charset="utf-8" />
+  <title>ServerData</title>
+  <meta name="viewport" content="width=device-width">
+  <link href="css/bootstrap.css" rel="stylesheet">
+  <script src="jquery-1.11.0.min.js"></script>
+ </head>
+ <body>
+ 	<div id="wrapper" class="container">
+ 		<div class="navbar navbar-default" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">ナビゲーションの切替</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="index.html">SmartRoom</a>
+            </div><!-- /.navbar-header -->
+            <div class="navbar-collapse collapse">
+              <ul class="nav navbar-nav">
+                <li class="active"><a>Home</a></li>
+                <li><a href="history.html">Logs</a></li>
+                <li><a href="http://192.168.1.201:8000/">TankController</a></li>
+                <li><a href="http://192.168.1.201:8000/index.html">Pictures</a></li>
+                <li><a href="serverData.html">server</a></li>
+              </ul>
+            </div><!-- /.navbar-collapse -->
+          </div><!-- /.container -->
+        </div><!-- /.navbar -->
+
+	    <h1>ServerData</h1>
+	    <div id="dataArea">
+	    	
+	    </div>
+	    <script src="/socket.io/socket.io.js"></script>
+	    <script type="text/javascript">
+
+	        var socket = io.connect();
+
+	    	$('document').ready(function(){
+	    		socket.emit('severData', null);
+	    		console.log('onload');
+	    	});
+	    	socket.on('result', function(data){
+	    		$('#dataArea').innerHTML = data;
+	    		console.log('result');
+	    	});
+	    </script>
+	</div>
+    <script src="js/bootstrap.js"></script>
+ </body>
+</html>
+
+</body>
+</html>

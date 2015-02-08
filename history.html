@@ -4,82 +4,140 @@
 	<meta charset="UTF-8">
 	<title>history</title>
 	<meta name="viewport" content="width=device-width">
-	<link rel="stylesheet" href="css/index.css">
+  	<link href="css/bootstrap.css" rel="stylesheet">
 	<script src="jquery-1.11.0.min.js"></script>
-  	<script src="ccchart-v1.08.9b1.js" charset="utf-8"></script>
+  	<script src="js/Chart.js"></script>
 </head>
 <body>
-	<div id="graph_area">
-    	<canvas id="graph"></canvas>
-    </div>
+ 	<div id="wrapper" class="container">
+ 		<div class="navbar navbar-default" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">ナビゲーションの切替</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="index.html">SmartRoom</a>
+            </div><!-- /.navbar-header -->
+            <div class="navbar-collapse collapse">
+              <ul class="nav navbar-nav">
+                <li><a href="index.html">Home</a></li>
+                <li class="active"><a>Logs</a></li>
+                <li><a href="http://192.168.1.201:8000/">TankController</a></li>
+                <li><a href="http://192.168.1.201:8000/index.html">Pictures</a></li>
+              </ul>
+            </div><!-- /.navbar-collapse -->
+          </div><!-- /.container -->
+        </div><!-- /.navbar -->
 
-
-	<div id="get">
-		
-	</div>
+		<!-- Chart.js -->
+    	<div class="row">
+        	<div class="col-md-10">
+        		<canvas id="line" style="max-width:700px; width:100%;"></canvas>
+        	</div>
+    		<div id="get" class="com-md-1" style="overflow:scroll"></div>
+    	</div><!-- row -->
+    </div><!-- container -->
 
 
 	<script src="/socket.io/socket.io.js"></script>
 	<script type="text/javascript">
-		var data_array = new Array(12);
+ 
 	    //ボタンが押されたらメッセージ送信
         var socket = io.connect();
+
+        //時間ごとのデータを保存する配列dataArray
+        var dataArray;
+        //グラフ用オブジェクトを格納するmyLine
+        var myLine;
+
+
         $('document').ready(function(){
-            socket.emit('history','history');
+        	//ディレクトリの中身を読み込む
+            socket.emit('getDir',null);
         });
-        //イベント受信時の処理
-        socket.on('log_data',function(data){
-            //$('#get').text(data);
-            //console.log(data);
-            var i = 0;
-            data_array[i++] = data;
-	    });
-	    console.log(data_array);
 
-		ccchart.base('', {config : {
-		    "type" : "line", //チャート種類
-		    "useVal" : "yes", //値を表示
-		    "xScaleFont" : "100 16px 'meiryo'", //水平軸目盛フォント
-		    "yScaleFont" : "100 16px 'meiryo'", //垂直軸目盛フォント
-		    "hanreiFont" : "bold 16px 'meiryo'", //凡例フォント
-		    "valFont" : "bold 16px 'meiryo'", //値フォント
-		    "paddingTop" : "25", //上パディング
-		    "paddingRight" : "140", //右パディング
-		    "colorSet" : ["blue"], //データ列の色
-		    "useShadow" : "no", //影
-		    "height" : "300", //チャート高さ
-		    "width" : "900", //チャート幅
-		    "useMarker" : "arc", //マーカー種類
-		    "markerWidth" : "7", //マーカー大きさ
-		    "valYOffset" : "8", //値オフセット
-		    "valXOffset" : "-8", //値オフセット
-		    "bg" : "#fff", //背景色
-		    "textColor" : "#333", //テキスト色
-		    "lineWidth" : "1", //ラインの太さ
-		}});
+        socket.on('init', function(data){
+        	//サーバからファイル一覧が送られてくる
+        	//タグを生成してファイル名を値として設定
+        	for(var i=0; i<data.length; i++){
+        		if(data[i].match(/^20.*/)){
+        			var anc = $('<button>');
+		        	anc.attr('value', data[i]);
+		        	anc.attr('onClick', 'select(this)');
+		        	anc.addClass('btn');
+		        	anc.append(data[i]);
+		        	$('#get').append(anc);
+        		}	
+        	}
+        	//ページを開いたときに一番最初に表示するグラフ（最新）
+        	//data.length-1はrttmp.txtのため-2が直近のデータ
+        	socket.emit('history', data[data.length-2]);
+        });
+        function select(obj){
+        	//ボタンをクリックしたときに呼び出す処理
+        	//dataArray = 
+        	//ボタンのvalueを取り出し、サーバーに送信
+        	socket.emit('history', obj.getAttribute('value'));
+        }
+        socket.on('text', function(data){
+        	//グラフ描画用オブジェクト
+	    	var lineChartData = {
+				labels : [],
+				datasets : [
+				{
+                    fillColor : "rgba(151,187,205,0.5)",
+                    strokeColor : "rgba(151,187,205,1)",
+                    pointColor : "rgba(151,187,205,1)",
+                    pointStrokeColor : "#fff",
+                    data : [],
+                    label: "気温"
+				},
+				{
+                    fillColor : "rgba(220,220,220,0.5)",
+                    strokeColor : "rgba(220,220,220,1)",
+                    pointColor : "rgba(220,220,220,1)",
+                    pointStrokeColor : "#fff",
+                    data : [],
+                    label: "湿度"
+				}]
+			};
 
-		var graph = {
-		"config" : {
-		  "colorSet" : ["red"], //データ列の色
-		  "minY" : 0, //Y軸最小値
-		  "maxY" : 100, //Y軸最大値
-		  "axisXLen" : 10, //水平目盛線の本数
-		  "roundDigit":0, // 軸目盛値の端数処理
-		},
-		"data" : [
-		            ["日付"],
-		            ["気温"],
-		         ]
-		};
+            var options = {
+                //bezierCurve : false
+            };
+	        dataArray = [];
+	        //サーバーから送られてくるデータを改行毎に区切る
+        	dataArray = data.split('\n');
+        	//最後の空文字を削除
+        	dataArray.length -= 1;
+        	console.log(dataArray);
+        	for(var i=0; i<dataArray.length; i++){
+        		var tmp = dataArray[i].split(',');
+        		//[湿度,気温,気圧,日時]の4つがなければ無効として飛ばす
+        		if(tmp.length != 4) continue;
+        		//ラベルに時間を表示
+        		//（yyyy-mm-dd hh:mm:ssで送られてくるのでスペースでsplitし、hh:mm:ssだけ抜き取る）
+				lineChartData.labels.push(tmp[3].split(' ')[1]);
+				//気温
+				lineChartData.datasets[0].data.push(Number(tmp[1]));
+				//湿度
+				lineChartData.datasets[1].data.push(Number(tmp[0]));
+        	}
 
-		// チャート用データ設定  
-		var sales1 = {4:10, 5:30, 6:40, 7:30, 8:60, 9:50};
-		var i = 0;
-		for (key in sales1){
-		  i++;
-		  chart_sample1["data"][0][i] = key;
-		  chart_sample1["data"][1][i] = sales1[key];
-		}
+			console.log(lineChartData);
+			//グラフの初期化のためオブジェクトの内容を消す
+			if(myLine != null){
+				for(var key in myLine){
+					delete myLine[key];
+				}
+			}
+			//グラフ描画
+			myLine = new Chart(document.getElementById("line").getContext("2d")).Line(lineChartData, options);
+        });
 	</script>
+    <script src="js/bootstrap.js"></script>
 </body>
 </html>

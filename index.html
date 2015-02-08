@@ -1,13 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
  <head>
   <meta charset="utf-8" />
   <title>arduino control</title>
   <meta name="viewport" content="width=device-width">
-  <link rel="stylesheet" href="css/index.css">
   <link href="css/bootstrap.css" rel="stylesheet">
   <script src="jquery-1.11.0.min.js"></script>
-  <script src="ccchart-v1.08.9b1.js" charset="utf-8"></script>
  </head>
  <body>
  	<div id="wrapper" class="container">
@@ -20,45 +18,50 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              <a class="navbar-brand" href="#">SmartRoom</a>
+              <a class="navbar-brand" href="index.html">SmartRoom</a>
             </div><!-- /.navbar-header -->
             <div class="navbar-collapse collapse">
               <ul class="nav navbar-nav">
                 <li class="active"><a>Home</a></li>
+                <li><a href="history.html">Logs</a></li>
                 <li><a href="http://192.168.1.201:8000/">TankController</a></li>
-                <li><a href="http://192.168.1.201:8080/index.html">Pictures</a></li>
+                <li><a href="http://192.168.1.201:8000/index.html">Pictures</a></li>
+                <li><a href="serverData.html">server</a></li>
               </ul>
             </div><!-- /.navbar-collapse -->
           </div><!-- /.container -->
         </div><!-- /.navbar -->
 
 	    <h1>RoomMonitor</h1>
-		<div id="gArea">
-	    	<canvas id="graph"></canvas>
-	    	<a href="history.html">過去のログ</a>
-	    </div>
-	    <div id="data">
-		    <h2>温度:<span id="temp"></span> ℃</h2>
-		    <h2>湿度:<span id="hum"></span> ％</h2>
-		    <h2>気圧:<span id="pre"></span> hPa</h2>
-		    <button class="btn">エアコン ON/OFF</button>
-		</div>
-		<div id="camera">
-			<h2>Camera</h2>
-			<img src="http://192.168.1.201:9000/?action=stream" width="400px">
-		</div>
+	    <div class="row">
+			<div id="camera" class="col-md-6">
+				<h2>Camera</h2>
+				<img src="http://192.168.1.200:8080/?action=stream" style="width:100%;">
+			</div>
+		    <div id="data" class="col-md-6">
+		    	<h2>Data</h2>
+		    	<br>
+			    <h2>温度:<span id="temp"></span> ℃</h2>
+			    <h2>湿度:<span id="hum"></span> ％</h2>
+			    <h2>気圧:<span id="pre"></span> hPa</h2>
+		    	<a href="history.html" class="btn btn-primary">過去のログ</a><br><br>
+
+			    <button class="btn">エアコン ON/OFF</button>
+			    <button id="switchOn" class="btn">スイッチ ON</button>
+			    <button id="switchOff" class="btn">スイッチ OFF</button>
+			</div>
+		</div><!-- row -->
 	    <script src="/socket.io/socket.io.js"></script>
 	    <script>
-	    var temp = {};
 	    var getData;
-		var timeArray = [];
-
-
 	        
 	        //ボタンが押されたらメッセージ送信
 	        var socket = io.connect();
-	        $('button').click(function(){
+	        $('#switchOn').click(function(){
 	            socket.emit('sendmsg','o');
+	        });
+	        $('#switchOff').click(function(){
+	            socket.emit('sendmsg','f');
 	        });
 	        //イベント受信時の処理
 	        socket.on('recvmsg',function(data){
@@ -70,55 +73,9 @@
 	            $('#pre').text(getData[2]);
 			    
 	        });
-
-		    var data1 = {
-
-		      "config": {
-		        "title": "",
-		        "subTitle": "",
-		        "height": "300",
-		        "width": "400",
-		        "paddingTop": "30",
-		        "paddingRight": "70",
-		        "type": "line",
-		        "lineWidth": 2,
-		        "maxY": 100,
-		        "minY": 0,
-		        "axisYLen": 10,
-		        //"useVal": "yes",
-		        "useMarker": "arc",
-		        "xScaleSkip": 3,
-		        "maxWsColLen": 10,
-		        "colorSet": 
-		              ["#DDA0DD","#3CB000"]
-		      },
-
-		      "data":  [
-		        ["時間"],
-		        ["温度"],
-		        ["湿度"]
-		      ]
-		    }
-		 //    var data2= {
-			// 	"config": {
-			// 	"type": "area",
-			// 	"title": "data2",
-			// 	"axisXLen": 5,
-			// 	"subtitle": "あいうえお",
-			// 	"minY": 0,
-			// 	"unit":"data2",
-			// 	"borderWidth": 4,
-			// 	"hanreiMarkerStyle": 'arc'
-			// },
-
-			  ccchart.wsCloseAll();//一旦クリア
-			  ccchart
-			      .init('graph', data1)
-			      .ws('ws://192.168.1.200:8016')
-			      .on('message', ccchart.wscase.oneColAtATime);
+		    
 	    </script>
 	</div>
-    <script src="http://code.jquery.com/jquery-latest.js"></script>
     <script src="js/bootstrap.js"></script>
  </body>
 </html>
