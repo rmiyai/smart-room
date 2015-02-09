@@ -47,7 +47,7 @@ serial.on('data',function(data){
 io.sockets.on('connection',function(socket){
 	socket.on('sendmsg',function(data){
 		serial.write(data,function(err,results){
-
+            if(err) console.log(err);
 		});
 	});
     socket.on('getDir',function(data){
@@ -64,21 +64,32 @@ io.sockets.on('connection',function(socket){
         })
     });
 
-    socket.on('serverData', function(data){
-        console.log(data);
-        var child = exec('sh /home/pi/t_cpu.sh', function(err, stdout, stderr){
-            if(!err){
-                console.log('stdout' + stdout);
-                console.log('stderr' + stderr);
-                io.emit('result', stdout);
-            }else{
-                console.log(err);
-                console.log(err.code);
-                console.log(err.signal);
-            }
+    socket.on('cpuTemp', function(data){
+        exec('sh /home/pi/t_cpu.sh', function(err, stdout, stderr){
+            if(err) console.log(err);
+            io.emit('cpuResult', stdout);
+        });
+    });
+    socket.on('reload', function(data){
+        exec('vmstat', function(err,stdout,stderr){
+            if(err) console.log(err);
+            io.emit('vmstatResult', stdout);
+        });
+        exec('free', function(err, stdout, stderr){
+            if(err) console.log(err);
+            io.emit('freeResult',stdout);
+        });
+        exec('w', function(err, stdout, stderr){
+            if(err) console.log(err);
+            io.emit('wResult',stdout);
+        });
+        exec('last', function(err, stdout, stderr){
+            if(err) console.log(err);
+            io.emit('lastResult',stdout);
         });
     });
 });
+
 
 
 

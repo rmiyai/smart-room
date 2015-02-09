@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="ja">
- <head>
-  <meta charset="utf-8" />
-  <title>ServerData</title>
-  <meta name="viewport" content="width=device-width">
-  <link href="css/bootstrap.css" rel="stylesheet">
-  <script src="jquery-1.11.0.min.js"></script>
+<head>
+	<meta charset="utf-8" />
+	<title>ServerData</title>
+	<meta name="viewport" content="width=device-width">
+	<link href="css/bootstrap.css" rel="stylesheet">
+	<script src="jquery-1.11.0.min.js"></script>
  </head>
  <body>
  	<div id="wrapper" class="container">
@@ -26,28 +26,160 @@
                 <li><a href="history.html">Logs</a></li>
                 <li><a href="http://192.168.1.201:8000/">TankController</a></li>
                 <li><a href="http://192.168.1.201:8000/index.html">Pictures</a></li>
-                <li><a href="serverData.html">server</a></li>
               </ul>
             </div><!-- /.navbar-collapse -->
           </div><!-- /.container -->
         </div><!-- /.navbar -->
 
 	    <h1>ServerData</h1>
-	    <div id="dataArea">
-	    	
-	    </div>
+	    <div class="row">
+		    <div id="dataArea">
+		    	<h3>CPU:<span id="temp"></span>℃</h3>
+		    </div>
+		    <button type="button" class="btn btn-primary" id="reload">Reload</button>
+		</div>
+		<div>
+			<table class="table table-striped table-bordered">
+				<thead>
+					<tr>
+						<th colspan="2">procs</th>
+						<th colspan="4">memory</th>
+						<th colspan="2">swap</th>
+						<th colspan="2">io</th>
+						<th colspan="2">system</th>
+						<th colspan="4">cpu</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>r</td>
+						<td>b</td>
+						<td>swpd</td>
+						<td>free</td>
+						<td>buff</td>
+						<td>cache</td>
+						<td>si</td>
+						<td>so</td>
+						<td>bi</td>
+						<td>bo</td>
+						<td>in</td>
+						<td>cs</td>
+						<td>us</td>
+						<td>sy</td>
+						<td>id</td>
+						<td>wa</td>
+					</tr>
+					<tr id="addArea">
+
+					</tr>
+				</tbody>
+			</table>
+			<table class="table table-striped table-bordered">
+				<thead>
+					<tr>
+						<th></th>
+						<th>total</th>
+						<th>used</th>
+						<th>free</th>
+						<th>shared</th>
+						<th>buffers</th>
+						<th>cached</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr id="mem">
+						<th>Mem:</th>
+					</tr>
+					<tr id="buf">
+						<th>-/+ buffers/cache:</th>
+						<td></td>
+						<td class="used"></td>
+						<td class="free"></td>
+						<td></td>
+						<td></td>
+						<td></td>
+					</tr>
+					<tr id="swap">
+						<th>Swap:</th>
+						<td class="total"></td>
+						<td class="used"></td>
+						<td class="free"></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
 	    <script src="/socket.io/socket.io.js"></script>
 	    <script type="text/javascript">
 
 	        var socket = io.connect();
 
 	    	$('document').ready(function(){
-	    		socket.emit('severData', null);
+	    		socket.emit('cpuTemp', null);
 	    		console.log('onload');
 	    	});
-	    	socket.on('result', function(data){
-	    		$('#dataArea').innerHTML = data;
-	    		console.log('result');
+	    	socket.on('cpuResult', function(data){
+	    		$('#temp').html(Number(data) / 1000);
+	    	});
+	    	$('#reload').click(function(){
+	    		console.log('click');
+	    		socket.emit('reload', null);
+	    	});
+	    	socket.on('vmstatResult',function(data){
+	    		var dataArray = [];
+	    		var tData = [];
+	    		//<td class="data">があれば削除
+	    		if($('.vmstatData')){
+	    			$('.vmstatData').remove();
+	    		}
+
+	    		console.log(data);
+	    		dataArray = data.split('\n');
+	    		tData = dataArray[2].split(' ');
+	    		for(var i=0; i<tData.length; i++){
+	    			if(tData[i] != ''){
+	    				$('#addArea').append('<td class="vmstatData">' + tData[i] + '</td>');
+	    			}
+	    		}
+	    	});
+	    	socket.on('freeResult', function(data){
+	    		var dataArray = [];
+	    		var work = [];
+	    		if($('.memData')){
+	    			$('.memData').remove();
+	    		}
+
+	    		dataArray = data.split('\n');
+	    		work = dataArray[1].split(' ');
+	   			for(var i=1; i<work.length; i++){
+	   				if(work[i] != ''){
+	   					$('#mem').append('<td class="memData">' + work[i] + '</td>');
+	   				}
+	   			}
+	   			work.length = 0;
+	   			work = dataArray[2].split(' ');
+	   			console.log(work);
+	   			work.splice(0,7);
+	   			work.splice(-5,4);
+	   			$('.used','#buf').text(work[0]);
+	   			$('.free','#buf').text(work[1]);
+
+	   			work.length = 0;
+	   			work = dataArray[3].split(' ');
+	   			var swpArray = [];
+	   			for(var i=0; i<work.length; i++){
+	   				if(work[i].match(/[0-9]+/)){
+	   					swpArray.push(data);
+	   				}
+	   			}
+	   			console.log(swpArray);
+	   			console.log(work);
+	   			console.log(dataArray);
+
 	    	});
 	    </script>
 	</div>
