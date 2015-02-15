@@ -24,8 +24,8 @@
               <ul class="nav navbar-nav">
                 <li class="active"><a>Home</a></li>
                 <li><a href="history.html">Logs</a></li>
-                <li><a href="http://192.168.1.201:8000/">TankController</a></li>
-                <li><a href="http://192.168.1.201:8000/index.html">Pictures</a></li>
+                <li><a href="http://192.168.1.201/">TankController</a></li>
+                <li><a href="http://192.168.1.201/index.html">Pictures</a></li>
               </ul>
             </div><!-- /.navbar-collapse -->
           </div><!-- /.container -->
@@ -107,7 +107,6 @@
 						<td></td>
 						<td></td>
 						<td></td>
-						<td></td>
 					</tr>
 				</tbody>
 			</table>
@@ -120,6 +119,7 @@
 
 	    	$('document').ready(function(){
 	    		socket.emit('cpuTemp', null);
+	    		socket.emit('reload', null);
 	    		console.log('onload');
 	    	});
 	    	socket.on('cpuResult', function(data){
@@ -128,31 +128,38 @@
 	    	$('#reload').click(function(){
 	    		console.log('click');
 	    		socket.emit('reload', null);
+	    		socket.emit('cpuTemp', null);
 	    	});
+
+	    	//vmstatの結果を受け取る
 	    	socket.on('vmstatResult',function(data){
+	    		//vmstatの結果を受け取る配列dataArray
 	    		var dataArray = [];
+	    		//更新する数値を格納する配列tData
 	    		var tData = [];
 	    		//<td class="data">があれば削除
+	    		//再読み込み時に要素が増えないように
 	    		if($('.vmstatData')){
 	    			$('.vmstatData').remove();
 	    		}
-
-	    		console.log(data);
+	    		//配列を改行で区切る
 	    		dataArray = data.split('\n');
+	    		//数値データの入ったdataArray[2]をスペースで区切る
 	    		tData = dataArray[2].split(' ');
+	    		//要素の分繰り返しdomを生成
 	    		for(var i=0; i<tData.length; i++){
 	    			if(tData[i] != ''){
 	    				$('#addArea').append('<td class="vmstatData">' + tData[i] + '</td>');
 	    			}
 	    		}
 	    	});
+	    	//freeの結果を受け取る
 	    	socket.on('freeResult', function(data){
 	    		var dataArray = [];
 	    		var work = [];
 	    		if($('.memData')){
 	    			$('.memData').remove();
 	    		}
-
 	    		dataArray = data.split('\n');
 	    		work = dataArray[1].split(' ');
 	   			for(var i=1; i<work.length; i++){
@@ -160,26 +167,30 @@
 	   					$('#mem').append('<td class="memData">' + work[i] + '</td>');
 	   				}
 	   			}
+	   			//作業用配列を初期化
 	   			work.length = 0;
 	   			work = dataArray[2].split(' ');
-	   			console.log(work);
-	   			work.splice(0,7);
-	   			work.splice(-5,4);
+	   			//数値データのみ配列に再格納
+	   			work = $.grep(work, function(elm, index){
+	   				return elm.match(/\d/);
+	   			});
+	   			//idをつけたtdの内容を書き込む
 	   			$('.used','#buf').text(work[0]);
 	   			$('.free','#buf').text(work[1]);
 
 	   			work.length = 0;
 	   			work = dataArray[3].split(' ');
-	   			var swpArray = [];
-	   			for(var i=0; i<work.length; i++){
-	   				if(work[i].match(/[0-9]+/)){
-	   					swpArray.push(data);
-	   				}
-	   			}
-	   			console.log(swpArray);
-	   			console.log(work);
-	   			console.log(dataArray);
+	   			work = $.grep(work, function(elm, index){
+	   				return elm.match(/\d/);
+	   			});
+	   			$('.total','#swap').text(work[0]);
+	   			$('.used','#swap').text(work[1]);
+	   			$('.free','#swap').text(work[2]);
+	    	});
 
+	    	socket.on('wResult', function(data){
+	    		var DataArray = [];
+	    		var work = [];
 	    	});
 	    </script>
 	</div>
